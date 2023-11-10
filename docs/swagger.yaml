@@ -1,0 +1,228 @@
+definitions:
+  handler.makeReservationInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  model.Event:
+    properties:
+      end_at:
+        type: string
+      id:
+        type: integer
+      start_at:
+        type: string
+      title:
+        type: string
+    type: object
+  model.MakeReservationEvent:
+    properties:
+      end_at:
+        type: string
+      id:
+        type: integer
+      start_at:
+        type: string
+      title:
+        type: string
+    type: object
+  model.MakeReservationResponse:
+    properties:
+      event:
+        $ref: '#/definitions/model.MakeReservationEvent'
+      reservation:
+        $ref: '#/definitions/model.Reservation'
+      workshop:
+        $ref: '#/definitions/model.MakeReservationWorkshop'
+    type: object
+  model.MakeReservationWorkshop:
+    properties:
+      description:
+        type: string
+      end_at:
+        type: string
+      id:
+        type: integer
+      start_at:
+        type: string
+      title:
+        type: string
+    type: object
+  model.Reservation:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.Workshop:
+    properties:
+      description:
+        type: string
+      end_at:
+        type: string
+      event_id:
+        type: integer
+      id:
+        type: integer
+      start_at:
+        type: string
+      title:
+        type: string
+    type: object
+  model.WorkshopDetail:
+    properties:
+      description:
+        type: string
+      end_at:
+        type: string
+      id:
+        type: integer
+      start_at:
+        type: string
+      title:
+        type: string
+      total_reservations:
+        type: integer
+    type: object
+  model.WorkshopList:
+    properties:
+      end_at:
+        type: string
+      id:
+        type: integer
+      start_at:
+        type: string
+      title:
+        type: string
+      workshops:
+        items:
+          $ref: '#/definitions/model.Workshop'
+        type: array
+    type: object
+info:
+  contact: {}
+paths:
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Get list of events with pagination
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get list of events
+      tags:
+      - events
+  /events/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get event details by providing its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Event'
+      summary: Get event details by ID
+      tags:
+      - events
+  /events/{id}/reservation:
+    post:
+      consumes:
+      - application/json
+      description: Make reservation for a workshop by providing its ID, name and email
+      parameters:
+      - description: Workshop ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Reservation details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.makeReservationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.MakeReservationResponse'
+      summary: Make reservation for a workshop
+      tags:
+      - events
+  /events/{id}/workshops:
+    get:
+      consumes:
+      - application/json
+      description: Get workshop list by providing event ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.WorkshopList'
+      summary: Get workshop list by event ID
+      tags:
+      - events
+  /workshops/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get workshop details by providing its ID
+      parameters:
+      - description: Workshop ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.WorkshopDetail'
+      summary: Get workshop details by ID
+      tags:
+      - events
+swagger: "2.0"
